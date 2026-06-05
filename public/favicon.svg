@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Background: deep near-black with subtle warm undertone matching app theme -->
+  <rect width="1024" height="1024" rx="192" ry="192" fill="#0A0C10"/>
+
+  <!-- Faint gold border ring -->
+  <rect x="32" y="32" width="960" height="960" rx="170" ry="170"
+        fill="none" stroke="#D4AF37" stroke-width="14" opacity="0.32"/>
+
+  <!-- Inner shadow gradient for slight depth -->
+  <defs>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="60%">
+      <stop offset="60%" stop-color="#0A0C10" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55"/>
+    </radialGradient>
+    <linearGradient id="goldShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F4D77A"/>
+      <stop offset="55%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#A6831F"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="192" ry="192" fill="url(#vignette)"/>
+
+  <!-- The mark: an italic serif "B" inspired by DM Serif Display, the same
+       face used for the login headline. Drawn manually so it lands cleanly
+       in the optical center and survives tiny favicon sizes. -->
+  <text x="512" y="770"
+        font-family="DM Serif Display, Didot, 'Bodoni 72', Georgia, serif"
+        font-weight="700"
+        font-size="780"
+        text-anchor="middle"
+        fill="url(#goldShine)"
+        letter-spacing="-30">B</text>
+
+  <!-- Tiny music-note accent — kept from the original mark as a signature
+       grace note. Eighth note in the upper-right corner. -->
+  <g fill="#D4AF37" opacity="0.88">
+    <circle cx="820" cy="248" r="34"/>
+    <rect x="844" y="138" width="20" height="120" rx="6"/>
+    <path d="M 844 138 Q 924 158 904 230 L 904 178 Q 880 168 864 184 Z" opacity="0.75"/>
+  </g>
+</svg>

@@ -1,0 +1,84 @@
+// Thin client for the existing Bandstand FastAPI backend.
+// Every fetch uses Next's revalidate: 60 so pages stay fresh without
+// hammering the API on every request. Cached server-side at Vercel's edge.
+
+const BASE = process.env.BANDSTAND_API || 'https://live-jazz-chicago.preview.emergentagent.com';
+
+export type Event = {
+  event_id: string;
+  artist_id: string;
+  artist_name: string;
+  artist_image_url?: string | null;
+  venue_id: string;
+  venue_name: string;
+  date: string;
+  time?: string;
+  cover_charge?: string;
+  description?: string;
+  editors_pick?: boolean;
+  status: string;
+};
+
+export type Venue = {
+  venue_id: string;
+  name: string;
+  description?: string;
+  address?: string;
+  phone?: string;
+  website?: string;
+  image_url?: string;
+  neighborhood?: string;
+};
+
+export type Artist = {
+  artist_id: string;
+  name: string;
+  bio?: string;
+  image_url?: string;
+  spotify_url?: string;
+  apple_music_url?: string;
+};
+
+async function get<T>(path: string, revalidate = 60): Promise<T | null> {
+  try {
+    const res = await fetch(`${BASE}${path}`, {
+      next: { revalidate },
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchUpcomingEvents(): Promise<Event[]> {
+  const data = await get<Event[]>('/api/events?when=upcoming');
+  return data || [];
+}
+
+export async function fetchTodaysEditorsPick(): Promise<Event | null> {
+  const events = await fetchUpcomingEvents();
+  // Same Chicago-local-day filter the mobile app uses.
+  const today = new Date()
+    .toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+  const picks = events.filter((e) => e.editors_pick && (e.date || '').slice(0, 10) === today);
+  if (picks.length) return picks[0];
+  // No pick today? Return the next future editors_pick.
+  const futurePicks = events
+    .filter((e) => e.editors_pick)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  return futurePicks[0] || null;
+}
+
+export async function fetchVenues(): Promise<Venue[]> {
+  const data = await get<Venue[]>('/api/venues');
+  return data || [];
+}
+
+export async function fetchTonightsCount(): Promise<number> {
+  const events = await fetchUpcomingEvents();
+  const today = new Date()
+    .toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+  return events.filter((e) => (e.date || '').slice(0, 10) === today).length;
+}
