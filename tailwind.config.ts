@@ -23,5 +23,5 @@ export default {
       },
     },
   },
-  plugins: [typography, lineClamp],
+  plugins: [typography],
 } satisfies Config;
