@@ -67,12 +67,19 @@ export async function fetchTodaysEditorsPick(): Promise<Event | null> {
   // Same Chicago-local-day filter the mobile app uses.
   const today = new Date()
     .toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
-  const picks = events.filter((e) => e.editors_pick && (e.date || '').slice(0, 10) === today);
+  const picks = events
+    .filter((e) => e.editors_pick && (e.date || '').slice(0, 10) === today)
+    // Sort by start time so the *early* set of a multi-set night is featured.
+    // (Garcia's, Jazz Showcase, etc. often book 7pm + 9:30pm of the same band.)
+    .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
   if (picks.length) return picks[0];
   // No pick today? Return the next future editors_pick.
   const futurePicks = events
     .filter((e) => e.editors_pick)
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .sort((a, b) => {
+      const dc = a.date.localeCompare(b.date);
+      return dc !== 0 ? dc : (a.time || '').localeCompare(b.time || '');
+    });
   return futurePicks[0] || null;
 }
 
