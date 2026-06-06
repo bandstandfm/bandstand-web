@@ -11,6 +11,9 @@ export type Event = {
   artist_image_url?: string | null;
   venue_id: string;
   venue_name: string;
+  venue_address?: string;
+  venue_phone?: string;
+  venue_website?: string;
   date: string;
   time?: string;
   cover_charge?: string;
@@ -28,6 +31,8 @@ export type Venue = {
   website?: string;
   image_url?: string;
   neighborhood?: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 export type Artist = {
