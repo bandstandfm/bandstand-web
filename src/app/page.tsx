@@ -38,13 +38,15 @@ export default async function Home() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3 items-center">
             <AppStoreBadge />
-            <Link href="#tonight" className="inline-flex items-center px-5 py-3 rounded-xl border border-white/20 text-ink hover:border-brand hover:text-brand transition">
-              See tonight &rarr;
+            <Link href="/tonight" className="inline-flex items-center px-5 py-3 rounded-xl border border-white/20 text-ink hover:border-brand hover:text-brand transition">
+              See tonight&apos;s shows &rarr;
             </Link>
           </div>
           {tonightCount > 0 ? (
             <p className="mt-6 text-sm text-ink/55">
-              <span className="text-brand font-semibold">{tonightCount}</span> show{tonightCount === 1 ? '' : 's'} listed tonight across 18 Chicago jazz rooms.
+              <Link href="/tonight" className="hover:text-brand transition">
+                <span className="text-brand font-semibold">{tonightCount}</span> show{tonightCount === 1 ? '' : 's'} listed tonight across 18 Chicago jazz rooms.
+              </Link>
             </p>
           ) : null}
         </div>
@@ -68,6 +70,13 @@ export default async function Home() {
             </div>
             <div className="lg:col-span-7">
               <EditorsPickCard event={pick} />
+              {tonightCount > 1 ? (
+                <p className="mt-6 text-center sm:text-left">
+                  <Link href="/tonight" className="inline-flex items-center text-brand hover:text-brandShine transition text-sm tracking-wide">
+                    See all {tonightCount} shows happening in Chicago tonight &rarr;
+                  </Link>
+                </p>
+              ) : null}
             </div>
           </div>
         </section>

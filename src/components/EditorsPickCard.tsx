@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import type { Event } from '@/lib/api';
 
@@ -21,14 +22,17 @@ export default function EditorsPickCard({ event }: { event: Event }) {
   const img = event.artist_image_url ||
     'https://images.pexels.com/photos/164693/pexels-photo-164693.jpeg?auto=compress&w=940';
   return (
-    <div className="relative bg-surface border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
+    <Link
+      href={`/shows/${event.event_id}`}
+      className="block relative bg-surface border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-black/40 hover:border-brand/40 transition group"
+    >
       <div className="relative aspect-[16/10] w-full bg-bg">
         <Image
           src={img}
           alt={event.artist_name}
           fill
           sizes="(min-width: 1024px) 720px, 100vw"
-          className="object-cover"
+          className="object-cover transition duration-500 group-hover:scale-[1.02]"
           priority
           unoptimized
         />
@@ -47,7 +51,10 @@ export default function EditorsPickCard({ event }: { event: Event }) {
         {event.description ? (
           <p className="mt-4 text-ink/75 leading-relaxed line-clamp-3">{event.description}</p>
         ) : null}
+        <p className="mt-5 text-brand text-sm group-hover:text-brandShine transition">
+          View show details &rarr;
+        </p>
       </div>
-    </div>
+    </Link>
   );
 }

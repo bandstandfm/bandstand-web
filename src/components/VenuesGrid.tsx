@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import type { Venue } from '@/lib/api';
 
 export default function VenuesGrid({ venues }: { venues: Venue[] }) {
@@ -10,7 +11,11 @@ export default function VenuesGrid({ venues }: { venues: Venue[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {list.map((v) => (
-        <div key={v.venue_id} className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-white/10 bg-surface">
+        <Link
+          key={v.venue_id}
+          href={`/venues/${v.venue_id}`}
+          className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-white/10 bg-surface block hover:border-brand/40 transition"
+        >
           {v.image_url ? (
             <Image
               src={v.image_url}
@@ -26,7 +31,7 @@ export default function VenuesGrid({ venues }: { venues: Venue[] }) {
             <h3 className="font-serif text-xl text-ink leading-tight">{v.name}</h3>
             {v.neighborhood ? <p className="text-xs tracking-widest uppercase text-brand/85 mt-1">{v.neighborhood}</p> : null}
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
