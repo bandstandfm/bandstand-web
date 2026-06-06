@@ -30,7 +30,7 @@ export default async function Tonight() {
     <article className="max-w-page mx-auto px-6 pt-24 pb-32">
       <header className="mb-12">
         <p className="text-brand text-xs tracking-[0.22em] uppercase font-medium">
-          {formatDateLong(`${today}T00:00:00`)} · Chicago
+          {formatDateLong(`${today}T12:00:00-05:00`)} · Chicago
         </p>
         <h1 className="mt-3 font-serif text-5xl sm:text-6xl text-ink leading-[1.05]">
           Jazz tonight.
