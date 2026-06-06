@@ -1,10 +1,14 @@
 // Small shared formatters reused on /tonight, /shows, /venues.
 
 export function formatDateLong(iso: string): string {
-  // "2026-07-15T01:00:00..." -> "Tuesday, July 15"
-  const day = (iso || '').slice(0, 10);
-  if (!day) return '';
-  const d = new Date(`${day}T12:00:00`);
+  // Parse the full ISO timestamp and render it as Chicago-local. The backend
+  // stores show dates as UTC strings where T01:00:00+00:00 = 8pm Chicago of
+  // the *previous* UTC day, so we MUST convert to America/Chicago before
+  // pulling the weekday/day-number out, or every Saturday-evening show will
+  // print as "Sunday".
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
   return d.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
