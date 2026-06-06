@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { fetchUpcomingEvents } from '@/lib/api';
-import { chicagoToday, formatDateLong, formatTime } from '@/lib/format';
+import { chicagoTodayKey, eventChicagoDateKey, fetchUpcomingEvents } from '@/lib/api';
+import { formatDateLong, formatTime } from '@/lib/format';
 
 export const revalidate = 300; // 5 min — fresh enough for nightly listings
 
@@ -21,9 +21,9 @@ export const metadata: Metadata = {
 
 export default async function Tonight() {
   const events = await fetchUpcomingEvents();
-  const today = chicagoToday();
+  const today = chicagoTodayKey();
   const tonight = events
-    .filter((e) => (e.date || '').slice(0, 10) === today)
+    .filter((e) => eventChicagoDateKey(e) === today)
     .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
   return (
