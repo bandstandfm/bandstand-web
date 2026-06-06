@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { chicagoTodayKey, eventChicagoDateKey, fetchUpcomingEvents } from '@/lib/api';
 import { formatDateLong, formatTime } from '@/lib/format';
 
-export const revalidate = 300; // 5 min — fresh enough for nightly listings
+export const revalidate = 60; // 1 min safety net — primary refresh is webhook-driven
 
 export const metadata: Metadata = {
   title: 'Jazz tonight in Chicago — live shows tonight',
