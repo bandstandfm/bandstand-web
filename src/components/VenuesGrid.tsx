@@ -3,11 +3,16 @@ import Link from 'next/link';
 import type { Venue } from '@/lib/api';
 
 export default function VenuesGrid({ venues }: { venues: Venue[] }) {
-  // Filter to ones with images and a description; sort alphabetically.
+  // Show all venues that have an image. Sort by display name, ignoring a
+  // leading "The " so "The Green Mill" sorts under G (where users look),
+  // not under T.
   const list = venues
     .filter((v) => v.image_url)
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .slice(0, 12);
+    .sort((a, b) => {
+      const an = a.name.replace(/^the\s+/i, '').toLowerCase();
+      const bn = b.name.replace(/^the\s+/i, '').toLowerCase();
+      return an.localeCompare(bn);
+    });
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {list.map((v) => (
