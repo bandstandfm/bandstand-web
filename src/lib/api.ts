@@ -54,17 +54,50 @@ export type Artist = {
   apple_music_url?: string;
 };
 
-async function get<T>(path: string, revalidate = 60): Promise<T | null> {
-  try {
-    const res = await fetch(`${BASE}${path}`, {
-      next: { revalidate },
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
-  } catch {
-    return null;
+async function get<T>(path: string, revalidate = 3600): Promise<T | null> {
+  // Resilient fetch: 2 attempts with a sane per-request timeout. Why this
+  // matters: the FastAPI backend's MongoDB pool can take 3-5s to warm on a
+  // cold connection, and Vercel serverless cold-starts add their own
+  // latency. Without retries, a single transient hiccup would make the
+  // calling page render with `null` data (empty state) — which is what
+  // Kyle kept seeing.
+  //
+  // The 8s per-attempt timeout sits comfortably below Vercel's 10s hobby-
+  // tier function deadline. Two attempts with a 750ms gap gives us up to
+  // ~17s of patience in the worst case while still leaving headroom.
+  const ATTEMPTS = 2;
+  const PER_ATTEMPT_TIMEOUT_MS = 8000;
+  let lastErr: unknown = null;
+
+  for (let i = 0; i < ATTEMPTS; i++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), PER_ATTEMPT_TIMEOUT_MS);
+    try {
+      const res = await fetch(`${BASE}${path}`, {
+        next: { revalidate },
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (!res.ok) {
+        // 4xx/5xx from backend — don't retry, the path is just wrong
+        // or the backend has a real bug. Returning null lets the page
+        // render its empty state rather than throw at the user.
+        return null;
+      }
+      return (await res.json()) as T;
+    } catch (e) {
+      clearTimeout(timer);
+      lastErr = e;
+      // Brief pause before retry to let an overloaded backend breathe.
+      if (i < ATTEMPTS - 1) await new Promise((r) => setTimeout(r, 750));
+    }
   }
+  // All attempts failed. Log so Vercel captures it in their Logs tab —
+  // important: previously this was silent, which made cold-start failures
+  // invisible.
+  console.error(`[bandstand-api] ${path} failed after ${ATTEMPTS} attempts:`, lastErr);
+  return null;
 }
 
 export async function fetchUpcomingEvents(): Promise<Event[]> {

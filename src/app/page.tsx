@@ -9,11 +9,23 @@ import {
   fetchTonightsCount,
 } from '@/lib/api';
 
-// Why dynamic instead of ISR:
-// The homepage's Editor's Pick + "X shows listed tonight" both depend on
-// "today in Chicago" — which changes at midnight regardless of backend
-// activity, so ISR can't catch it. Always render fresh.
-export const dynamic = 'force-dynamic';
+// ISR with a 1-hour window. Why this instead of `force-dynamic`:
+//
+// Every page render must call our FastAPI backend. If the Vercel serverless
+// function or the backend pod has been idle, that first call takes 3-8s
+// (function cold-start + MongoDB connection warmup). The user lands on a
+// blank "0 shows tonight" page while the regeneration finishes — exactly
+// the symptom Kyle kept hitting.
+//
+// ISR fixes this with stale-while-revalidate: the user gets the cached
+// HTML *instantly*, and any regeneration happens in the background. The
+// long window doesn't compromise freshness because:
+//   1. The backend webhook flushes the cache the second data changes
+//      (scrape, editor's pick toggle, approve/reject — all 6 write paths).
+//   2. The 00:01 America/Chicago cron flushes when the date rolls over.
+//   3. The 5-min backend keep-warm ping prevents the regeneration itself
+//      from ever cold-starting in steady state.
+export const revalidate = 3600; // 1h safety net — primary refresh is webhook-driven
 
 export default async function Home() {
   const [pick, venues, tonightCount] = await Promise.all([
