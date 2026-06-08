@@ -34,6 +34,22 @@ export default async function Home() {
     fetchTonightsCount(),
   ]);
 
+  // Render guard — if any of these are empty/missing, something is wrong
+  // with the backend response and we should NOT cache a broken render. By
+  // throwing here, Next.js discards this regeneration and keeps the
+  // previously cached (good) HTML, instead of overwriting it with an
+  // empty homepage.
+  //
+  // Pick can legitimately be null (Kyle hasn't curated today yet → fallback
+  // picks the next future show), so we don't guard on it.
+  // Venues count is a hard floor — Bandstand launched with 18 and is only
+  // additive. 0 venues means the backend returned [] which means the fetch
+  // either failed or returned a corrupt/empty payload. Either way: do not
+  // cache.
+  if (venues.length === 0) {
+    throw new Error('[render-guard /] venues list empty — aborting ISR cache write');
+  }
+
   return (
     <>
       {/* HERO */}

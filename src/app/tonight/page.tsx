@@ -30,6 +30,20 @@ export default async function Tonight() {
     .filter((e) => eventChicagoDateKey(e) === today)
     .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
+  // Render guard — see homepage rationale. An empty upcoming-events list
+  // means the backend fetch returned an empty/corrupt payload (Chicago jazz
+  // is never genuinely empty 30 days out). Throwing makes Next.js keep the
+  // previously cached HTML on a failed ISR regen rather than poisoning the
+  // cache with an empty "no shows tonight" page.
+  //
+  // We DO NOT throw on `tonight.length === 0` alone — that could be a real
+  // (sad) state on, say, a major holiday + ice storm combo. We only throw
+  // when the entire upcoming list is empty, which is the impossible-by-data
+  // signal.
+  if (events.length === 0) {
+    throw new Error('[render-guard /tonight] upcoming events list empty — aborting ISR cache write');
+  }
+
   return (
     <article className="max-w-page mx-auto px-6 pt-24 pb-32">
       <header className="mb-12">
