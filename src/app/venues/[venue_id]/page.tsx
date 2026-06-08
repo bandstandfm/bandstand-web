@@ -2,20 +2,27 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { fetchUpcomingEvents, fetchVenues } from '@/lib/api';
+import { fetchUpcomingEvents, fetchVenue, fetchVenues } from '@/lib/api';
 import { formatDateLong, formatTime } from '@/lib/format';
 import { venueSchema, jsonLdScript } from '@/lib/seo';
 
-export const revalidate = 600;
+// Long ISR window — venue metadata changes rarely. Webhook revalidation
+// (admin events approve/reject) updates the upcoming-shows list instantly.
+export const revalidate = 86400; // 24h
 
 type Params = { venue_id: string };
 
 async function loadVenue(venueId: string) {
-  const [venues, events] = await Promise.all([
-    fetchVenues(),
-    fetchUpcomingEvents(),
-  ]);
-  const venue = venues.find((v) => v.venue_id === venueId) || null;
+  // Fetch venue by id directly — survives `fetchVenues()` being slow or
+  // momentarily incomplete. Falls back to the venue list if /api/venues/{id}
+  // is missing (older backend) so the page still renders.
+  const direct = await fetchVenue(venueId);
+  let venue = direct;
+  if (!venue) {
+    const venues = await fetchVenues().catch(() => []);
+    venue = venues.find((v) => v.venue_id === venueId) || null;
+  }
+  const events = await fetchUpcomingEvents().catch(() => []);
   const upcoming = events
     .filter((e) => e.venue_id === venueId)
     .sort((a, b) => a.date.localeCompare(b.date));

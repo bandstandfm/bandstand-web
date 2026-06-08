@@ -73,6 +73,24 @@ export async function fetchUpcomingEvents(): Promise<Event[]> {
 }
 
 /**
+ * Fetch a single event by id, regardless of whether it's past or upcoming.
+ *
+ * Why this exists: the show page used to filter through the "upcoming"
+ * list, which meant any link to a past show (push-notification deep links,
+ * bookmarks of yesterday's Editor's Pick, App Store reviewers revisiting
+ * a saved URL the next day) hit a hard 404. The backend's
+ * /api/events/{id} endpoint serves any event by id, so a past show still
+ * renders normally — preserving SEO, share URLs, and reviewer experience.
+ */
+export async function fetchEvent(eventId: string): Promise<Event | null> {
+  return get<Event>(`/api/events/${encodeURIComponent(eventId)}`);
+}
+
+export async function fetchVenue(venueId: string): Promise<Venue | null> {
+  return get<Venue>(`/api/venues/${encodeURIComponent(venueId)}`);
+}
+
+/**
  * Return the Chicago-local YYYY-MM-DD bucket for an event.
  *
  * If the backend has supplied `chicago_date` (June 2026+), use it directly.

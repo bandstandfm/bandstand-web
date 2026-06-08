@@ -2,24 +2,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { fetchUpcomingEvents, fetchVenues } from '@/lib/api';
+import {
+  fetchEvent,
+  fetchUpcomingEvents,
+  fetchVenue,
+  fetchVenues,
+} from '@/lib/api';
 import { formatDateLong, formatTime } from '@/lib/format';
 import { eventSchema, jsonLdScript } from '@/lib/seo';
 
-export const revalidate = 600; // 10 min
+// Long ISR window: individual show pages rarely change. We rely on the
+// /api/revalidate webhook (backend admin actions) to flush them surgically,
+// so the long stale window also acts as a safety net when the backend is
+// momentarily unreachable.
+export const revalidate = 86400; // 24h
 
 type Params = { event_id: string };
 
 async function loadEvent(eventId: string) {
-  const [events, venues] = await Promise.all([
-    fetchUpcomingEvents(),
-    fetchVenues(),
-  ]);
-  const event = events.find((e) => e.event_id === eventId);
-  if (!event) return { event: null, venue: null, related: [] as typeof events };
-  const venue = venues.find((v) => v.venue_id === event.venue_id) || null;
-  // “More at this venue” sidebar: next 5 upcoming at same venue, sorted by date.
-  const related = events
+  // Fetch the event by id directly — works for past shows, future shows,
+  // anything. Previously we filtered `fetchUpcomingEvents()`, which 404'd
+  // every bookmarked / shared / push-notification link to yesterday's
+  // show by today.
+  const event = await fetchEvent(eventId);
+  if (!event) return { event: null, venue: null, related: [] };
+  // Venue lookup is independent — keep working even if the venue endpoint
+  // is briefly unavailable.
+  const venue = await fetchVenue(event.venue_id).catch(() => null);
+  // "More at this venue" sidebar: next 5 upcoming at same venue, sorted by date.
+  const upcoming = await fetchUpcomingEvents().catch(() => []);
+  const related = upcoming
     .filter((e) => e.venue_id === event.venue_id && e.event_id !== event.event_id)
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 5);
