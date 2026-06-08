@@ -15,6 +15,16 @@ export type Event = {
   venue_phone?: string;
   venue_website?: string;
   date: string;
+  /**
+   * Chicago-local YYYY-MM-DD computed by the backend.
+   *
+   * Prefer this over slicing `date` — `date` is a UTC ISO string and 8pm
+   * Chicago shows are stored as `T01:00:00+00:00` of the *next* UTC day,
+   * so the UTC prefix lies. The backend started populating this field in
+   * June 2026; older clients/cached responses may be missing it, hence
+   * `eventChicagoDateKey()` falls back to computing it client-side.
+   */
+  chicago_date?: string;
   time?: string;
   cover_charge?: string;
   description?: string;
@@ -63,17 +73,20 @@ export async function fetchUpcomingEvents(): Promise<Event[]> {
 }
 
 /**
- * Convert an event's UTC `date` string to a Chicago-local YYYY-MM-DD bucket.
+ * Return the Chicago-local YYYY-MM-DD bucket for an event.
  *
- * Why this exists: backend stores `date` as a UTC ISO timestamp where the
- * convention is `T01:00:00+00:00` for an 8pm Chicago show (since 8pm CDT =
- * 01:00 UTC the *next* day). The mobile app handles this by parsing the UTC
- * datetime and then re-rendering it in Chicago timezone — see
- * `app/(tabs)/index.tsx`. The website used to just slice the first 10 chars
- * of the UTC string, which silently bucketed every Saturday evening show
- * under "Sunday".
+ * If the backend has supplied `chicago_date` (June 2026+), use it directly.
+ * Otherwise fall back to parsing `date` and converting to America/Chicago,
+ * which is what the website used to do everywhere.
+ *
+ * Why this matters: the backend stores `date` as a UTC ISO string where
+ * `T01:00:00+00:00` is the convention for 8pm Chicago shows — so the first
+ * 10 chars are the *next* day's date in UTC. Slicing them silently moved
+ * Saturday-evening shows to "Sunday", evening Editor's Picks to "tomorrow",
+ * etc.
  */
-export function eventChicagoDateKey(e: { date?: string }): string {
+export function eventChicagoDateKey(e: { date?: string; chicago_date?: string }): string {
+  if (e.chicago_date) return e.chicago_date;
   const raw = e.date || '';
   if (!raw) return '';
   // `en-CA` locale formats dates as YYYY-MM-DD, which is exactly what we need.
