@@ -4,20 +4,15 @@ import type { Metadata } from 'next';
 import { chicagoTodayKey, eventChicagoDateKey, fetchUpcomingEvents } from '@/lib/api';
 import { formatDateLong, formatTime } from '@/lib/format';
 
-export const revalidate = 60; // 1 min safety net — primary refresh is webhook-driven
-
-export const metadata: Metadata = {
-  title: 'Jazz tonight in Chicago — live shows tonight',
-  description:
-    "Every live jazz show happening in Chicago tonight — the Green Mill, Jazz Showcase, Andy's, Constellation, and every room in between. Updated hourly.",
-  alternates: { canonical: 'https://bandstand.fm/tonight' },
-  openGraph: {
-    title: 'Jazz tonight in Chicago',
-    description: "Every live jazz show in Chicago tonight, hand-curated.",
-    url: 'https://bandstand.fm/tonight',
-    type: 'website',
-  },
-};
+// Why dynamic instead of ISR:
+// This page filters events by "today in Chicago" — a value that changes
+// when the clock rolls past midnight, NOT when any backend data changes.
+// ISR can't be invalidated by a clock event, so a 60-sec ISR window meant
+// the page silently served yesterday's shows for hours after midnight if
+// no visitor happened to wake the cache. Cost of going dynamic: ~150ms
+// per request to call the backend. Worth it for a time-of-day-critical
+// page. Detail pages (/shows/[id], /venues/[id]) stay on ISR + webhook.
+export const dynamic = 'force-dynamic';
 
 export default async function Tonight() {
   const events = await fetchUpcomingEvents();

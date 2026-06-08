@@ -9,7 +9,11 @@ import {
   fetchTonightsCount,
 } from '@/lib/api';
 
-export const revalidate = 60;
+// Why dynamic instead of ISR:
+// The homepage's Editor's Pick + "X shows listed tonight" both depend on
+// "today in Chicago" — which changes at midnight regardless of backend
+// activity, so ISR can't catch it. Always render fresh.
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const [pick, venues, tonightCount] = await Promise.all([
