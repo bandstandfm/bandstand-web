@@ -2,6 +2,8 @@
 // Every fetch uses Next's revalidate: 60 so pages stay fresh without
 // hammering the API on every request. Cached server-side at Vercel's edge.
 
+import { sendAlert } from './alert';
+
 const BASE = process.env.BANDSTAND_API || 'https://live-jazz-chicago.preview.emergentagent.com';
 
 export type Event = {
@@ -120,15 +122,21 @@ async function get<T>(path: string, revalidate = 3600): Promise<T | NotFound> {
       if (i < ATTEMPTS - 1) await new Promise((r) => setTimeout(r, 750));
     }
   }
-  // All attempts failed with network/timeout/5xx. Log + throw so that:
+  // All attempts failed with network/timeout/5xx. Log + alert + throw so that:
   //   1. Vercel Functions logs capture the failure (previously silent).
-  //   2. Next.js discards this render and keeps the prior cached HTML
+  //   2. Kyle gets an email so he knows the backend is having a moment.
+  //   3. Next.js discards this render and keeps the prior cached HTML
   //      instead of overwriting it with an empty page.
   console.error(`[bandstand-api] ${path} failed after ${ATTEMPTS} attempts:`, lastErr);
+  const errMessage =
+    lastErr instanceof Error ? lastErr.message : String(lastErr);
+  await sendAlert(
+    `api-fetch-failure:${path}`,
+    `Backend fetch to ${path} failed after ${ATTEMPTS} attempts: ${errMessage}`,
+    { extra: { backendBase: BASE, attempts: ATTEMPTS } },
+  );
   throw new Error(
-    `[bandstand-api] ${path} failed after ${ATTEMPTS} attempts: ${
-      lastErr instanceof Error ? lastErr.message : String(lastErr)
-    }`,
+    `[bandstand-api] ${path} failed after ${ATTEMPTS} attempts: ${errMessage}`,
   );
 }
 

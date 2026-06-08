@@ -8,6 +8,7 @@ import {
   fetchVenues,
   fetchTonightsCount,
 } from '@/lib/api';
+import { sendAlert } from '@/lib/alert';
 
 // ISR with a 1-hour window. Why this instead of `force-dynamic`:
 //
@@ -47,7 +48,12 @@ export default async function Home() {
   // either failed or returned a corrupt/empty payload. Either way: do not
   // cache.
   if (venues.length === 0) {
-    throw new Error('[render-guard /] venues list empty — aborting ISR cache write');
+    const msg = '[render-guard /] venues list empty — aborting ISR cache write';
+    await sendAlert('render-guard:/', msg, {
+      route: '/',
+      extra: { venuesLength: venues.length, tonightCount, hasPick: !!pick },
+    });
+    throw new Error(msg);
   }
 
   return (

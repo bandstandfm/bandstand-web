@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { chicagoTodayKey, eventChicagoDateKey, fetchUpcomingEvents } from '@/lib/api';
+import { sendAlert } from '@/lib/alert';
 import { formatDateLong, formatTime } from '@/lib/format';
 
 // ISR with a 1-hour window — see /app/website/src/app/page.tsx for the
@@ -41,7 +42,12 @@ export default async function Tonight() {
   // when the entire upcoming list is empty, which is the impossible-by-data
   // signal.
   if (events.length === 0) {
-    throw new Error('[render-guard /tonight] upcoming events list empty — aborting ISR cache write');
+    const msg = '[render-guard /tonight] upcoming events list empty — aborting ISR cache write';
+    await sendAlert('render-guard:/tonight', msg, {
+      route: '/tonight',
+      extra: { eventsLength: events.length, today, tonightLength: tonight.length },
+    });
+    throw new Error(msg);
   }
 
   return (
