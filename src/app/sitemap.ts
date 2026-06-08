@@ -1,5 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { fetchUpcomingEvents, fetchVenues } from '@/lib/api';
+import {
+  chicagoTodayKey,
+  eventChicagoDateKey,
+  fetchUpcomingEvents,
+  fetchVenues,
+} from '@/lib/api';
 
 const SITE = 'https://bandstand.fm';
 
@@ -60,11 +65,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Skip events that have already passed.
-  const future = events.filter((e) => {
-    const day = (e.date || '').slice(0, 10);
-    return day >= now.toISOString().slice(0, 10);
-  });
+  // Skip events that have already passed. Compare in Chicago time, not UTC,
+  // or we'd drop tonight's evening shows a day early.
+  const today = chicagoTodayKey();
+  const future = events.filter((e) => eventChicagoDateKey(e) >= today);
   const eventPages: MetadataRoute.Sitemap = future.map((e) => ({
     url: `${SITE}/shows/${e.event_id}`,
     lastModified: now,

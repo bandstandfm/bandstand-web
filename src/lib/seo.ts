@@ -9,6 +9,7 @@
 //   - WebSite: https://schema.org/WebSite
 
 import type { Event as ShowEvent, Venue } from './api';
+import { eventChicagoDateKey } from './api';
 
 const SITE_URL = 'https://bandstand.fm';
 const SITE_NAME = 'Bandstand Chicago';
@@ -18,7 +19,12 @@ export function eventStartIso(e: ShowEvent): string {
   // The backend stores `date` as a UTC ISO string and `time` as HH:MM Chicago
   // local. We want a proper local ISO 8601 with tz offset so Google honours
   // it (e.g. "2026-07-15T20:00:00-05:00").
-  const day = (e.date || '').slice(0, 10);
+  //
+  // Critical: we must derive the *Chicago-local* day, not a naive slice of
+  // the UTC string — backend stores 8pm-Chicago shows as `T01:00:00+00:00`
+  // of the *next* UTC day, which would otherwise bump every evening show
+  // forward by one day.
+  const day = eventChicagoDateKey(e) || (e.date || '').slice(0, 10);
   const time = (e.time || '20:00').slice(0, 5);
   // -05:00 (CDT) for May-Nov, -06:00 (CST) for Nov-Mar. Rough estimate good
   // enough for SEO — Google is forgiving on small offset errors.

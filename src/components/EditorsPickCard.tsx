@@ -1,22 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Event } from '@/lib/api';
-
-function formatDate(iso: string) {
-  const day = (iso || '').slice(0, 10);
-  if (!day) return '';
-  const d = new Date(day + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-}
-
-function formatTime(t?: string) {
-  if (!t) return '';
-  const [hh, mm] = t.split(':').map(Number);
-  if (isNaN(hh)) return t;
-  const period = hh >= 12 ? 'pm' : 'am';
-  const h = hh % 12 || 12;
-  return mm ? `${h}:${String(mm).padStart(2, '0')}${period}` : `${h}${period}`;
-}
+import { formatDateLong, formatTime } from '@/lib/format';
 
 export default function EditorsPickCard({ event }: { event: Event }) {
   const img = event.artist_image_url ||
@@ -42,7 +27,7 @@ export default function EditorsPickCard({ event }: { event: Event }) {
         </div>
       </div>
       <div className="p-6 sm:p-8">
-        <p className="text-brand text-xs tracking-[0.2em] uppercase font-medium">{formatDate(event.date)} · {formatTime(event.time)}</p>
+        <p className="text-brand text-xs tracking-[0.2em] uppercase font-medium">{formatDateLong(event.date)} · {formatTime(event.time)}</p>
         <h3 className="mt-2 font-serif text-3xl sm:text-4xl text-ink leading-tight">{event.artist_name}</h3>
         <p className="mt-1 text-ink/70">at {event.venue_name}</p>
         {event.cover_charge ? (
