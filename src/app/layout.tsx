@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import BfcacheReload from '@/components/BfcacheReload';
 import { jsonLdScript, organizationSchema, websiteSchema } from '@/lib/seo';
 
 export const metadata: Metadata = {
@@ -106,6 +107,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen flex flex-col">
+        {/* Mounted once globally — forces a fresh fetch when iOS Safari
+            restores the page from bfcache hours after it was backgrounded. */}
+        <BfcacheReload />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
