@@ -28,7 +28,6 @@ export default function VenuesGrid({ venues }: { venues: Venue[] }) {
               fill
               sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
               className="object-cover transition duration-500 group-hover:scale-105"
-              unoptimized
             />
           ) : null}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
