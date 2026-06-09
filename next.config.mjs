@@ -6,11 +6,13 @@ const nextConfig = {
       { protocol: 'https', hostname: '**' },
     ],
   },
-  // Bandstand backend lives at this URL. Reads happen at request time via
-  // ISR (revalidate: 60s) so the marketing site stays fresh without
-  // hammering the API.
+  // Bandstand backend lives at the *deployed* URL (always-on, 24/7). The
+  // *.preview.emergentagent.com URL is the dev sandbox that sleeps on
+  // idle — never point production traffic at it. The Vercel env var
+  // takes precedence; this default exists so the build doesn't break
+  // if the env var is ever absent.
   env: {
-    BANDSTAND_API: process.env.BANDSTAND_API || 'https://live-jazz-chicago.preview.emergentagent.com',
+    BANDSTAND_API: process.env.BANDSTAND_API || 'https://live-jazz-chicago.emergent.host',
   },
 };
 export default nextConfig;
