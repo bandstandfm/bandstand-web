@@ -21,7 +21,7 @@ const FAQS = [
   },
   {
     q: 'Why don\'t I see push notifications in Expo Go?',
-    a: 'Remote push notifications were removed from Expo Go in SDK 53. The full version on the App Store supports them.',
+    a: 'Remote push notifications were removed from Expo Go in SDK 53. The full version on the App Store and Google Play supports them.',
   },
   {
     q: 'Will Bandstand expand to other cities?',

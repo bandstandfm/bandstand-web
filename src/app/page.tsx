@@ -3,6 +3,7 @@ import HeroVideo from '@/components/HeroVideo';
 import EditorsPickCard from '@/components/EditorsPickCard';
 import VenuesGrid from '@/components/VenuesGrid';
 import AppStoreBadge from '@/components/AppStoreBadge';
+import GooglePlayBadge from '@/components/GooglePlayBadge';
 import {
   fetchTodaysEditorsPick,
   fetchVenues,
@@ -76,6 +77,7 @@ export default async function Home() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3 items-center">
             <AppStoreBadge />
+            <GooglePlayBadge />
             <Link href="/tonight" className="inline-flex items-center px-5 py-3 rounded-xl border border-white/20 text-ink hover:border-brand hover:text-brand transition">
               See tonight&apos;s shows &rarr;
             </Link>
@@ -159,8 +161,8 @@ export default async function Home() {
       <section className="max-w-page mx-auto px-6 mt-24 sm:mt-32">
         <div className="border border-white/10 rounded-2xl bg-surface px-8 py-12 sm:py-16 text-center">
           <h2 className="font-serif text-4xl sm:text-5xl text-ink">Hear it before everyone else does.</h2>
-          <p className="mt-4 max-w-xl mx-auto text-ink/65">The Bandstand app is launching on the App Store this season. Until then, you can browse tonight&apos;s curation right here.</p>
-          <div className="mt-7 inline-flex"><AppStoreBadge /></div>
+          <p className="mt-4 max-w-xl mx-auto text-ink/65">The Bandstand app is launching on the App Store and Google Play this season. Until then, you can browse tonight&apos;s curation right here.</p>
+          <div className="mt-7 inline-flex flex-wrap gap-3 justify-center"><AppStoreBadge /><GooglePlayBadge /></div>
         </div>
       </section>
     </>
