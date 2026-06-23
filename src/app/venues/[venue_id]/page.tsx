@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { fetchUpcomingEvents, fetchVenue, fetchVenues } from '@/lib/api';
+import { fetchUpcomingEventsByVenue, fetchVenue, fetchVenues } from '@/lib/api';
 import { formatDateLong, formatTime } from '@/lib/format';
 import { venueSchema, jsonLdScript } from '@/lib/seo';
 
@@ -22,9 +22,11 @@ async function loadVenue(venueId: string) {
     const venues = await fetchVenues().catch(() => []);
     venue = venues.find((v) => v.venue_id === venueId) || null;
   }
-  const events = await fetchUpcomingEvents().catch(() => []);
-  const upcoming = events
-    .filter((e) => e.venue_id === venueId)
+  // Use the venue-filtered endpoint so far-future shows (e.g. CSO's
+  // October bookings) aren't dropped by the 500-event cap on the
+  // unfiltered /api/events?when=upcoming list.
+  const upcoming = (await fetchUpcomingEventsByVenue(venueId).catch(() => []))
+    .slice()
     .sort((a, b) => a.date.localeCompare(b.date));
   return { venue, upcoming };
 }

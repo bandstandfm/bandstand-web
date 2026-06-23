@@ -159,6 +159,25 @@ export async function fetchUpcomingEvents(): Promise<Event[]> {
 }
 
 /**
+ * Fetch upcoming events for ONE venue. Bypasses the 500-event cap on the
+ * unfiltered /api/events?when=upcoming endpoint — which silently drops
+ * far-future shows (e.g. CSO's October bookings) because near-term venues
+ * fill the cap first. Use this on /venues/[venue_id] so every booked show
+ * surfaces regardless of how far out it is.
+ */
+export async function fetchUpcomingEventsByVenue(venueId: string): Promise<Event[]> {
+  const data = await get<Event[]>(
+    `/api/events?venue_id=${encodeURIComponent(venueId)}&when=upcoming`,
+  );
+  if (data === NOT_FOUND) {
+    throw new Error(
+      `[bandstand-api] /api/events?venue_id=${venueId}&when=upcoming returned 404 — backend route missing`,
+    );
+  }
+  return data;
+}
+
+/**
  * Fetch a single event by id, regardless of whether it's past or upcoming.
  *
  * Why this exists: the show page used to filter through the "upcoming"
