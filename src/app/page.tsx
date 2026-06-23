@@ -11,7 +11,7 @@ import {
 } from '@/lib/api';
 import { sendAlert } from '@/lib/alert';
 
-// ISR with a 1-hour window. Why this instead of `force-dynamic`:
+// ISR with a 5-minute window. Why this instead of `force-dynamic`:
 //
 // Every page render must call our FastAPI backend. If the Vercel serverless
 // function or the backend pod has been idle, that first call takes 3-8s
@@ -20,14 +20,16 @@ import { sendAlert } from '@/lib/alert';
 // the symptom Kyle kept hitting.
 //
 // ISR fixes this with stale-while-revalidate: the user gets the cached
-// HTML *instantly*, and any regeneration happens in the background. The
-// long window doesn't compromise freshness because:
-//   1. The backend webhook flushes the cache the second data changes
-//      (scrape, editor's pick toggle, approve/reject — all 6 write paths).
-//   2. The 00:01 America/Chicago cron flushes when the date rolls over.
-//   3. The 5-min backend keep-warm ping prevents the regeneration itself
-//      from ever cold-starting in steady state.
-export const revalidate = 3600; // 1h safety net — primary refresh is webhook-driven
+// HTML *instantly*, and any regeneration happens in the background.
+//
+// June 2026 update: Dropped the window from 1h → 5min after a
+// production incident where /tonight froze on a Wed Jun 24 ISR cache
+// across a long quiet stretch. Even though /tonight is now
+// force-dynamic, the homepage's `tonightCount` chip + Editor's Pick
+// card still read off the same backend → they too need to stay
+// reasonably fresh, hence the tighter window. The 5-min window is
+// well within the backend keep-warm period so cold starts remain rare.
+export const revalidate = 300; // 5 min safety net — webhook still drives the primary refresh
 
 export default async function Home() {
   const [pick, venues, tonightCount] = await Promise.all([
@@ -67,10 +69,15 @@ export default async function Home() {
             <span className="w-1.5 h-1.5 rounded-full bg-brand" />
             <span className="text-xs tracking-[0.18em] uppercase text-ink/90 font-medium">Chicago · Live Jazz</span>
           </div>
-          <h1 className="mt-5 font-serif text-[clamp(48px,9vw,108px)] leading-[1.02] text-ink max-w-4xl drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-            Tonight on the
-            <br />
-            <span className="italic text-brand">bandstand.</span>
+          <h1 className="mt-5 text-ink max-w-4xl">
+            {/* 2026 marquee lockup matching the iOS login screen:
+                tall narrow caps over a chunky condensed city accent. */}
+            <span className="block font-display text-[clamp(64px,12vw,160px)] leading-[0.95] tracking-[0.04em] drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+              BANDSTAND
+            </span>
+            <span className="block font-accent text-brand text-[clamp(48px,9vw,120px)] leading-[1.08] tracking-[0.01em] mt-1 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+              Chicago
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-ink/85 leading-relaxed">
             Every live jazz show happening in Chicago tonight — the Green Mill, Jazz Showcase, Andy&apos;s, Constellation, the Logan Center, and every room in between. Hand-curated by a fan, never auto-listed.

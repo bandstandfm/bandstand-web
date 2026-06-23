@@ -5,11 +5,21 @@ import { chicagoTodayKey, eventChicagoDateKey, fetchUpcomingEvents } from '@/lib
 import { sendAlert } from '@/lib/alert';
 import { formatDateLong, formatTime } from '@/lib/format';
 
-// ISR with a 1-hour window — see /app/website/src/app/page.tsx for the
-// full rationale. force-dynamic caused cold-start blanks on first visit
-// after idle. The webhook + midnight cron handle freshness; ISR handles
-// resilience.
-export const revalidate = 3600;
+// Date-sensitive page → render on every request.
+//
+// Why we switched off ISR here (Jun 2026):
+//   The header reads "today" via `chicagoTodayKey()`. With ISR, Vercel
+//   captured a Wed Jun 24 render and kept serving it for days because:
+//     1. The webhook cache flush only fires on data writes, not on the
+//        calendar rolling over. A quiet 48 hours = stale "tonight".
+//     2. `revalidate: 3600` is a STALE-WHILE-REVALIDATE window: traffic
+//        is required to trigger regeneration. Low-traffic late nights
+//        leave the cache frozen on yesterday's date.
+//   `force-dynamic` removes the cache and forces a fresh `Date.now()`
+//   on every hit. The cold-start penalty is mitigated by the homepage
+//   ISR warmth + backend 5-min keep-warm — and tonight is the page
+//   where freshness matters most, not throughput.
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Jazz tonight in Chicago — live shows tonight',
@@ -56,8 +66,8 @@ export default async function Tonight() {
         <p className="text-brand text-xs tracking-[0.22em] uppercase font-medium">
           {formatDateLong(`${today}T12:00:00-05:00`)} · Chicago
         </p>
-        <h1 className="mt-3 font-serif text-5xl sm:text-6xl text-ink leading-[1.05]">
-          Jazz tonight.
+        <h1 className="mt-3 font-display tracking-[0.04em] text-5xl sm:text-7xl text-ink leading-[0.98]">
+          JAZZ <span className="text-brand font-accent tracking-[0.01em]">Tonight</span>
         </h1>
         <p className="mt-5 max-w-2xl text-ink/70 leading-relaxed">
           {tonight.length === 0

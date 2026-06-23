@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * 2026 Bandstand rebrand typography. The marquee lockup uses:
+ *   • Bebas Neue (tall narrow caps)      → wordmark "BANDSTAND"
+ *   • Anton (chunky condensed caps)       → city accent under it
+ *   • DM Serif Display                    → kept as a quiet body accent
+ *                                            (a few prose paragraphs still
+ *                                            use font-serif for nuance)
+ *   • Inter / system sans                 → body text
+ */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('/BebasNeue-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anton';
+  src: url('/Anton-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 @font-face {
   font-family: 'DM Serif Display';
   src: url('/DMSerifDisplay-Regular.ttf') format('truetype');
@@ -9,10 +32,19 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Inter';
+  src: url('/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
+  --font-display: 'Bebas Neue';
+  --font-accent: 'Anton';
   --font-serif: 'DM Serif Display';
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, system-ui, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 }
 
 html, body {
@@ -24,6 +56,7 @@ html, body {
 
 body {
   font-family: var(--font-sans);
+  font-weight: 400;
 }
 
 /* Selection in brand color */
