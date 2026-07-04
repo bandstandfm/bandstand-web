@@ -7,6 +7,10 @@ import Link from 'next/link';
  * by a small gold dot that doubles as the eighth-note grace mark used
  * throughout the brand system. Stripped the old serif "B" because it no
  * longer matches the in-app login screen or the new app icon.
+ *
+ * NOTE: intentionally NO Sign In link. This site is public-only marketing —
+ * exposing a Sign In here would imply the website supports auth, but auth
+ * lives exclusively in the mobile app / Expo web deploy.
  */
 export default function Header() {
   return (
