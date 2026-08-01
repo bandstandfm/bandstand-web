@@ -46,7 +46,7 @@ export default async function Home() {
   //
   // Pick can legitimately be null (Kyle hasn't curated today yet → fallback
   // picks the next future show), so we don't guard on it.
-  // Venues count is a hard floor — Bandstand launched with 18 and is only
+  // Venues count is a hard floor — Bandstand launched with 18+ and is only
   // additive. 0 venues means the backend returned [] which means the fetch
   // either failed or returned a corrupt/empty payload. Either way: do not
   // cache.
@@ -92,7 +92,7 @@ export default async function Home() {
           {tonightCount > 0 ? (
             <p className="mt-6 text-sm text-ink/55">
               <Link href="/tonight" className="hover:text-brand transition">
-                <span className="text-brand font-semibold">{tonightCount}</span> show{tonightCount === 1 ? '' : 's'} listed tonight across 18 Chicago jazz rooms.
+                <span className="text-brand font-semibold">{tonightCount}</span> show{tonightCount === 1 ? '' : 's'} listed tonight across {venues.length} Chicago jazz rooms.
               </Link>
             </p>
           ) : null}
@@ -133,7 +133,7 @@ export default async function Home() {
       <section className="max-w-page mx-auto px-6 mt-20 sm:mt-32">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
-            <p className="text-brand text-xs tracking-[0.22em] uppercase font-medium">18 Rooms</p>
+            <p className="text-brand text-xs tracking-[0.22em] uppercase font-medium">{venues.length} Rooms</p>
             <h2 className="mt-2 font-serif text-4xl sm:text-5xl text-ink leading-[1.05]">Every jazz venue in Chicago.</h2>
           </div>
           <p className="max-w-md text-ink/65">
