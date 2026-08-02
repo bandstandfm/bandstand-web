@@ -21,7 +21,7 @@ jobs:
       - name: Ping backend /api/venues
         run: |
           set -e
-          URL="https://live-jazz-chicago.preview.emergentagent.com/api/venues"
+          URL="https://live-jazz-chicago.emergent.host/api/venues"
           echo "Pinging $URL at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
           for attempt in 1 2; do
