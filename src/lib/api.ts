@@ -4,7 +4,7 @@
 
 import { sendAlert } from './alert';
 
-const BASE = process.env.BANDSTAND_API || 'https://live-jazz-chicago.preview.emergentagent.com';
+const BASE = process.env.BANDSTAND_API || 'https://live-jazz-chicago.emergent.host';
 
 export type Event = {
   event_id: string;

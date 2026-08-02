@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: false, error: `Missing ${k}` }, { status: 400 });
       }
     }
-    const api = process.env.BANDSTAND_API || 'https://live-jazz-chicago.preview.emergentagent.com';
+    const api = process.env.BANDSTAND_API || 'https://live-jazz-chicago.emergent.host';
     const r = await fetch(`${api}/api/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

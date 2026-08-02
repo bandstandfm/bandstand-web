@@ -13,7 +13,7 @@ const nextConfig = {
   // MongoDB/filesystem that's out of sync with the real admin data —
   // see chat log 2026-06-09 for the migration plan.
   env: {
-    BANDSTAND_API: process.env.BANDSTAND_API || 'https://live-jazz-chicago.preview.emergentagent.com',
+    BANDSTAND_API: process.env.BANDSTAND_API || 'https://live-jazz-chicago.emergent.host',
   },
 };
 export default nextConfig;

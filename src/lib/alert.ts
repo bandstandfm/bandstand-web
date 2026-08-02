@@ -102,7 +102,7 @@ export async function sendAlert(
       `---`,
       `Further alerts for this key are suppressed for ${SUPPRESS_WINDOW_MS / 60_000} minutes.`,
       `Logs: https://vercel.com/  →  bandstand-web  →  Functions  →  Logs`,
-      `Backend: https://live-jazz-chicago.preview.emergentagent.com/api/events?when=upcoming`,
+      `Backend: https://live-jazz-chicago.emergent.host/api/events?when=upcoming`,
     );
     const body = lines.join('\n');
 
