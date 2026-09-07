@@ -13,7 +13,7 @@ export default function About() {
       <h1 className="font-serif text-5xl sm:text-6xl text-ink mt-2 leading-[1.05]">Built by a fan, for fans.</h1>
       <div className="mt-8 space-y-6 text-ink/80 leading-relaxed text-lg">
         <p>
-          Bandstand Chicago started in 2026 to fill a simple need: one place to see every live jazz show happening in Chicago tonight, curated by someone who actually goes to the shows.
+          Bandstand Chicago started in 2026 to fill a simple need: one place to see every live jazz show happening in Chicago tonight, curated by someone who actually goes to the shows and knows the rooms.
         </p>
         <p>
           Chicago has the third-deepest jazz scene in the United States after New York and New Orleans — the Green Mill, the Jazz Showcase, Andy&apos;s, Constellation, the Logan Center, Winter&apos;s. On any given night there are 30 to 100 shows happening. But until Bandstand, there was nowhere to see them all in one place.
