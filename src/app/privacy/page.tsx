@@ -12,7 +12,7 @@ export default function Privacy() {
       <h1 className="font-serif text-5xl text-ink mt-2 mb-2">Privacy Policy</h1>
       <p className="text-ink/50 text-sm">Last updated: July 4, 2026</p>
 
-      <p>Bandstand (&ldquo;<strong>Bandstand</strong>,&rdquo; &ldquo;<strong>we</strong>,&rdquo; &ldquo;<strong>us</strong>&rdquo;) is an editorial app for live jazz, currently active in Chicago, New York, Kansas City, and Washington DC. This policy explains what data we collect, why, and what we do (and don&apos;t do) with it. We try to be plain-spoken; if anything below is unclear, write <a href="mailto:support@bandstand.fm">support@bandstand.fm</a>.</p>
+      <p>Bandstand (&ldquo;<strong>Bandstand</strong>,&rdquo; &ldquo;<strong>we</strong>,&rdquo; &ldquo;<strong>us</strong>&rdquo;) is an editorial app for live jazz, currently active in Chicago. This policy explains what data we collect, why, and what we do (and don&apos;t do) with it. We try to be plain-spoken; if anything below is unclear, write <a href="mailto:support@bandstand.fm">support@bandstand.fm</a>.</p>
 
       <h2>What we collect</h2>
       <p><strong>Account info.</strong> Bandstand supports three sign-in methods:</p>
