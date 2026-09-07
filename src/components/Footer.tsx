@@ -12,7 +12,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="mt-3 text-ink/55 leading-relaxed">
-            Hand-curated listings of live jazz tonight, every night — Chicago, New York, Washington DC, and Kansas City. Made by a fan, for fans.
+            Hand-curated listings of live jazz tonight, every night in Chicago. Made by a fan, for fans.
           </p>
         </div>
         <div className="flex flex-wrap gap-x-10 gap-y-3 text-ink/70">
