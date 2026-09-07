@@ -24,9 +24,6 @@ export default function About() {
         <p>
           The app is free. It doesn&apos;t sell ads. It doesn&apos;t sell your data. It accepts tips from listeners who want to support what we&apos;re doing.
         </p>
-        <p className="text-brand">
-          Coming next: New York, New Orleans, Paris, Buenos Aires. <Link href="/support" className="underline hover:text-brandShine">Suggest a city</Link>.
-        </p>
       </div>
     </article>
   );
