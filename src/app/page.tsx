@@ -167,7 +167,7 @@ export default async function Home() {
       {/* CTA STRIP */}
       <section className="max-w-page mx-auto px-6 mt-24 sm:mt-32">
         <div className="border border-white/10 rounded-2xl bg-surface px-8 py-12 sm:py-16 text-center">
-          <h2 className="font-serif text-4xl sm:text-5xl text-ink">Hear it before everyone else does.</h2>
+          <h2 className="font-serif text-4xl sm:text-5xl text-ink">Download Bandstand Live Now.</h2>
           <p className="mt-4 max-w-xl mx-auto text-ink/65">The Bandstand app is live on the App Store and Google Play. You can also browse tonight&apos;s curation right here.</p>
           <div className="mt-7 inline-flex flex-wrap gap-3 justify-center"><AppStoreBadge /><GooglePlayBadge /></div>
         </div>
