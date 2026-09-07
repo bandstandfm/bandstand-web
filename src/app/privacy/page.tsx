@@ -10,7 +10,7 @@ export default function Privacy() {
     <article className="max-w-2xl mx-auto px-6 pt-32 pb-16 prose prose-invert prose-headings:font-serif prose-headings:text-ink prose-p:text-ink/75 prose-a:text-brand prose-strong:text-ink prose-li:text-ink/75">
       <p className="text-brand text-xs tracking-[0.22em] uppercase font-medium">Legal</p>
       <h1 className="font-serif text-5xl text-ink mt-2 mb-2">Privacy Policy</h1>
-      <p className="text-ink/50 text-sm">Last updated: July 4, 2026</p>
+      <p className="text-ink/50 text-sm">Last updated: September 7, 2026</p>
 
       <p>Bandstand (&ldquo;<strong>Bandstand</strong>,&rdquo; &ldquo;<strong>we</strong>,&rdquo; &ldquo;<strong>us</strong>&rdquo;) is an editorial app for live jazz, currently active in Chicago. This policy explains what data we collect, why, and what we do (and don&apos;t do) with it. We try to be plain-spoken; if anything below is unclear, write <a href="mailto:support@bandstand.fm">support@bandstand.fm</a>.</p>
 
